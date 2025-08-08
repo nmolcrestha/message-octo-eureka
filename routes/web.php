@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,4 +23,5 @@ require __DIR__.'/auth.php';
 
 Route::middleware('auth')->group(function(){
     Route::get('/messages', [MessageController::class, 'index'])->name('messages');
+    Route::post('/profile', [UserProfileController::class, 'update'])->name('message.profile.update');
 });
