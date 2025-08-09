@@ -1,6 +1,6 @@
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <form action="#" class="profile-form">
+        <form action="#" class="profile-form" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-body">
                     @csrf
@@ -8,7 +8,7 @@
                         <img src="{{ asset(auth()->user()->avatar) }}" alt="Upload"
                             class="img-fluid profile-image-preview">
                         <label for="select_file"><i class="fal fa-camera-alt"></i></label>
-                        <input id="select_file" type="file" hidden>
+                        <input id="select_file" type="file" name="avatar" hidden>
                     </div>
                     <p>Edit information</p>
                     <input type="text" placeholder="Name" value="{{ auth()->user()->name }}" name="name">
@@ -40,13 +40,15 @@
     $(document).ready(function(){
         $('.profile-form').on('submit', function(e) {
             e.preventDefault();
-            let formData = $(this).serialize();
+            let formData = new FormData(this);
            $.ajax({
                 url: "{{ route('message.profile.update') }}",
                 method: 'POST',
                 data: formData,
+                processData: false,
+                contentType: false,
                 success: function(data) {
-                   
+                   window.location.reload();
                 },
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors;

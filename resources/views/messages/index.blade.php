@@ -22,7 +22,7 @@
 <script src="{{ asset('assets/js/emojionearea.min.js') }}"></script>
 
 <!--main/custom js-->
-<script src="{assets('assets/js/main.js')}"></script>
+<script src="{{ asset('assets/js/main.js') }}"></script>
 @endpush
 
 <x-app-layout>
