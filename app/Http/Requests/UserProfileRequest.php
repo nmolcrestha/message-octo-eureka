@@ -24,7 +24,7 @@ class UserProfileRequest extends FormRequest
         return [
             'name' => 'required|string|max:50',
             'email' => 'required|email|max:50|unique:users,email,' . $this->user()->id,
-            'user_name' => 'nullable|string|max:10',
+            'user_name' => 'nullable|string|max:10|unique:users,user_name,'. $this->user()->id,
             'avatar' => 'nullable|image|max:2048',
             'current_password' => ['nullable', 'required_with:new_password', 'current_password'],
             'password' => ['nullable', 'required_with:current_password', 'confirmed', 'min:8', 'different:current_password'],

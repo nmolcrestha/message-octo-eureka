@@ -29,7 +29,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary cancel" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary save">Save changes</button>
+                    <button type="submit" class="btn btn-primary save save-profile">Save changes</button>
                 </div>
             </div>
         </form>
@@ -40,6 +40,7 @@
     $(document).ready(function(){
         $('.profile-form').on('submit', function(e) {
             e.preventDefault();
+            let saveBtn = $('.save-profile');
             let formData = new FormData(this);
            $.ajax({
                 url: "{{ route('message.profile.update') }}",
@@ -47,6 +48,10 @@
                 data: formData,
                 processData: false,
                 contentType: false,
+                beforeSend: function(){
+                   saveBtn.text('Saving...');
+                   saveBtn.prop("disabled", true);
+                },
                 success: function(data) {
                    window.location.reload();
                 },
@@ -55,6 +60,8 @@
                     $.each(errors, function(index, value) {
                         notyf.error(value[0]);
                     });
+                    saveBtn.text('Save changes');
+                    saveBtn.prop("disabled", false);
                 }
             });
         });

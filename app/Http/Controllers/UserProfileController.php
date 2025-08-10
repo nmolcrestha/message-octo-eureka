@@ -21,6 +21,10 @@ class UserProfileController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->user_name = $request->user_name;
+        if(!is_null($request->current_password)){
+            $user->password = bcrypt($request->password);
+        }
+
         $user->save();
 
         notyf('Your profile has been updated.');
