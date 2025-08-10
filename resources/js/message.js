@@ -8,9 +8,28 @@ function imagePreview(input,selector) {
    }
  }
 
+ function searchUsers(query) {
+   $.ajax({
+      method: 'GET',
+      url: '/messenger/search',
+      data: {query: query},
+      success: function(data){
+         $('.user_search_list_result').html(data.records);
+      },
+      error: function(xhr, status, error){
+
+      }
+   })
+ }
+
 //  ON DOM LOAD
 $(document).ready(function() {
     $('#select_file').change(function() {
         imagePreview(this, '.profile-image-preview');
     });
+
+    $('.user_search').on('keyup', function (){
+      let query = $(this).val();
+      searchUsers(query);
+    })
 });
