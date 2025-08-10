@@ -30,7 +30,17 @@ function imagePreview(input,selector) {
          callback.apply(this, args);
       }, delay)
    }
+ }
 
+ function actionOnScroll(selector, callback, topScroll = false) { 
+   $(selector).on('scroll', function () {
+      let element = $(this).get(0);
+      const condition = topScroll ? element.scrollTop == 0 : element.scrollTop + element.clientHeight >= element.scrollHeight;
+
+      if(condition){
+         callback();
+      }
+   })
  }
 
 //  ON DOM LOAD
@@ -42,10 +52,16 @@ $(document).ready(function() {
     const debounceSearch = debounce(function() {
       const value = $('.user_search').val();
       searchUsers(value);
-    }, 500)
+    }, 500);
 
     $('.user_search').on('keyup', function (){
       let query = $(this).val();
       if(query.length>0) debounceSearch(); 
+    });
+
+    //search pagination
+    actionOnScroll('.user_search_list_result', function(){
+      let value = $('.user_search').val();
+      searchUsers(value);
     })
 });
