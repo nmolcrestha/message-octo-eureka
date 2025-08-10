@@ -22,14 +22,30 @@ function imagePreview(input,selector) {
    })
  }
 
+ function debounce(callback, delay){
+   let timerId;
+   return function(...args){
+      clearTimeout(timerId);
+      timerId = setTimeout(() => {
+         callback.apply(this, args);
+      }, delay)
+   }
+
+ }
+
 //  ON DOM LOAD
 $(document).ready(function() {
     $('#select_file').change(function() {
         imagePreview(this, '.profile-image-preview');
     });
 
+    const debounceSearch = debounce(function() {
+      const value = $('.user_search').val();
+      searchUsers(value);
+    }, 500)
+
     $('.user_search').on('keyup', function (){
       let query = $(this).val();
-      searchUsers(query);
+      if(query.length>0) debounceSearch(); 
     })
 });
