@@ -31,4 +31,10 @@ class MessageController extends Controller
             'last_page' => $records->lastPage()
         ]);
     }
+
+    function getUser(Request $request)
+    {
+        $user = User::find($request['id']);
+        return response()->json($user);
+    }
 }

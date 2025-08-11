@@ -72,6 +72,23 @@ function imagePreview(input,selector) {
    })
  }
 
+ function getIdInfo(id){
+   $.ajax({
+       method: "GET",
+       url: "/get-user",
+       data: {id: id},
+       success: function(data) {
+         $(".message-header").find("img").attr("src", data.avatar);
+         $(".message-header").find("h4").text(data.name);
+         $(".message-info-view").find(".user_name").text(data.name);
+         $(".message-info-view").find(".user_photo img").attr("src", data.avatar);
+         $(".message-info-view").find(".unique_user_name").text(data.user_name);
+         console.log(data);
+       },
+       error: function(xhr, status, error) {}
+   });
+ }
+
 //  ON DOM LOAD
 $(document).ready(function() {
     $('#select_file').change(function() {
@@ -92,5 +109,9 @@ $(document).ready(function() {
     actionOnScroll('.user_search_list_result', function(){
       let value = $('.user_search').val();
       searchUsers(value);
-    })
+    });
+
+    $('body').on('click', '.messenger-item-list', function() {
+       getIdInfo($(this).data('id'));
+    });
 });
