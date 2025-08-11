@@ -18,12 +18,17 @@ class MessageController extends Controller
         $records = User::where('id', '!=', Auth::user()->id)
                     ->where('name', 'LIKE',"%{$input}%")
                     ->orWhere('user_name', 'LIKE',"%{$input}%")
-                    ->get();
+                    ->paginate(10);
+
+        if($records->total() < 1) {
+            $getRecords = "<p class='text-center'>Nothing to show. </p>";
+        }
         foreach($records as $record){
             $getRecords .= view('messages.layouts.search-list', compact('record'))->render();
         }
         return response()->json([
-            'records' => $getRecords
+            'records' => $getRecords,
+            'last_page' => $records->lastPage()
         ]);
     }
 }

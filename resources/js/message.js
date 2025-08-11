@@ -8,18 +8,47 @@ function imagePreview(input,selector) {
    }
  }
 
+ let searchPage = 1;
+ let noMoreDataSearch = false;
+ let searchTempVal = "";
+ let setSearchLoading = false;
  function searchUsers(query) {
-   $.ajax({
-      method: 'GET',
-      url: '/messenger/search',
-      data: {query: query},
-      success: function(data){
-         $('.user_search_list_result').html(data.records);
-      },
-      error: function(xhr, status, error){
+   if(query!=searchTempVal){
+      searchPage = 1;
+      noMoreDataSearch = false;
+   }
+   searchTempVal = query;
 
-      }
-   })
+   if(!setSearchLoading && !noMoreDataSearch){
+      $.ajax({
+         method: 'GET',
+         url: '/messenger/search',
+         data: {query: query, page: searchPage},
+         beforeSend: function(){
+            setSearchLoading = true
+            let loadar = `<div class="text-center search-loader">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`;
+            $('.user_search_list_result').append(loadar);
+         },
+         success: function(data){
+            setSearchLoading = false;
+            $('.user_search_list_result').find('.search-loader').remove();
+            if(searchPage < 2){
+               $('.user_search_list_result').html(data.records);
+            }else{
+               $('.user_search_list_result').append(data.records);
+            }
+            noMoreDataSearch = searchPage >= data?.last_page;
+            if(!noMoreDataSearch) searchPage +=1;
+         },
+         error: function(xhr, status, error){
+            setSearchLoading = false;
+         }
+      })
+   }
  }
 
  function debounce(callback, delay){
