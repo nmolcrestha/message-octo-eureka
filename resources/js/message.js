@@ -8,6 +8,14 @@ function imagePreview(input,selector) {
    }
  }
 
+function enableChatBox(){
+   $(".wsus__message_paceholder").removeClass("d-none");
+}
+
+function disableChatBox(){
+   $(".wsus__message_paceholder").addClass("d-none");
+}
+
  let searchPage = 1;
  let noMoreDataSearch = false;
  let searchTempVal = "";
@@ -77,15 +85,22 @@ function imagePreview(input,selector) {
        method: "GET",
        url: "/get-user",
        data: {id: id},
+       beforeSend: function() {
+         nProgress.start();
+         enableChatBox();
+       },
        success: function(data) {
          $(".message-header").find("img").attr("src", data.avatar);
          $(".message-header").find("h4").text(data.name);
          $(".message-info-view").find(".user_name").text(data.name);
          $(".message-info-view").find(".user_photo img").attr("src", data.avatar);
          $(".message-info-view").find(".unique_user_name").text(data.user_name);
-         console.log(data);
+         disableChatBox();
+         nProgress.done();
        },
-       error: function(xhr, status, error) {}
+       error: function(xhr, status, error) {
+         disableChatBox();
+       }
    });
  }
 
