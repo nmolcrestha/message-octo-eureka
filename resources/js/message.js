@@ -119,41 +119,44 @@ function getIdInfo(id) {
     });
 }
 
-function sendMessage(){
-   tempMessageId += 1;
-   let tempID = `temp_${tempMessageId}`;
-   const inputValue = messageInput.val();
-   if(inputValue.length > 0){
-      const formData = new FormData(messageForm[0]);
-      formData.append("message", inputValue);
-      formData.append("id", getMessageId());
-      formData.append("temporaryMsgId", tempID);
-      formData.append("_token", csrf_token);
-      $.ajax({
-         method: "POST",
-         url: "/send-message",
-         data: formData,
-         dataType: "json",
-         processData: false,
-         contentType: false,
-         beforeSend: function () {
-            messageBoxContainer.append(sendTempMessageCard(tempID, inputValue));
-            messageForm.trigger("reset"); 
-            $(".emojionearea-editor").text("");
-         },
-         success: function (data) {
-            const tempMessageCardElement = messageBoxContainer.find(`.message-card[data-id="${tempID}"]`);
-            tempMessageCardElement.before(data.message);
-            tempMessageCardElement.remove();
-         },
-         error: function (xhr, status, error) {}
-      })
-
-   }
+function sendMessage() {
+    tempMessageId += 1;
+    let tempID = `temp_${tempMessageId}`;
+    const inputValue = messageInput.val();
+    if (inputValue.length > 0) {
+        const formData = new FormData(messageForm[0]);
+        formData.append("message", inputValue);
+        formData.append("id", getMessageId());
+        formData.append("temporaryMsgId", tempID);
+        formData.append("_token", csrf_token);
+        $.ajax({
+            method: "POST",
+            url: "/send-message",
+            data: formData,
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                messageBoxContainer.append(
+                    sendTempMessageCard(tempID, inputValue)
+                );
+                messageForm.trigger("reset");
+                $(".emojionearea-editor").text("");
+            },
+            success: function (data) {
+                const tempMessageCardElement = messageBoxContainer.find(
+                    `.message-card[data-id="${tempID}"]`
+                );
+                tempMessageCardElement.before(data.message);
+                tempMessageCardElement.remove();
+            },
+            error: function (xhr, status, error) {},
+        });
+    }
 }
 
-function sendTempMessageCard(tempId, message){
-   return `
+function sendTempMessageCard(tempId, message) {
+    return `
    <div class="wsus__single_chat_area message-card" data-id="${tempId}">
       <div class="wsus__single_chat chat_right">
          <p class="messages">${message}</p>
@@ -162,6 +165,13 @@ function sendTempMessageCard(tempId, message){
       </div>
    </div>`;
 }
+
+function messageFormReset() {
+    $(".attachment-block").addClass("d-none");
+    messageForm.trigger("reset");
+    $(".emojionearea-editor").text("");
+}
+
 //  ON DOM LOAD
 $(document).ready(function () {
     $("#select_file").change(function () {
@@ -191,7 +201,17 @@ $(document).ready(function () {
     });
 
     messageForm.on("submit", function (e) {
-      e.preventDefault();
-      sendMessage();
+        e.preventDefault();
+        sendMessage();
+    });
+
+    //send attachment
+    $(".attachment-input").on("change", function () {
+        imagePreview(this, ".attachment-preview");
+        $(".attachment-block").removeClass("d-none");
+    });
+
+    $(".cancel-attachment").on("click", function () {
+        messageFormReset();
     });
 });
