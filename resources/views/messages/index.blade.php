@@ -143,7 +143,7 @@
                     </div>
                 </div>
 
-                <div class="wsus__single_chat_area">
+                {{-- <div class="wsus__single_chat_area">
                     <div class="wsus__single_chat chat_right">
                         <div class="pre_loader">
                             <div class="spinner-border text-light" role="status">
@@ -156,7 +156,7 @@
                         <span class="time"> 5h ago</span>
                         <a class="action" href="#"><i class="fas fa-trash"></i></a>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
 
@@ -166,10 +166,10 @@
                         <img src="images/chat_img.png" alt="User" class="img-fluid attachment-preview">
                         <span class="cancel-attachment"><i class="far fa-times"></i></span>
                     </div>
-                    <form action="#" class="message-form">
+                    <form action="#" class="message-form" enctype="multipart/form-data">
                         <div class="file">
                             <label for="file"><i class="far fa-plus"></i></label>
-                            <input id="file" type="file" hidden class="attachment-input">
+                            <input id="file" type="file" hidden class="attachment-input" name="attachment" accept="image/*">
                         </div>
                         <textarea id="example1" rows="1" placeholder="Type a message.." name="message" class="message-input"></textarea>
                         <button><i class="fas fa-paper-plane"></i></button>

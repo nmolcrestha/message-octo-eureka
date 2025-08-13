@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('form_id');
             $table->foreignId('to_id');
-            $table->text('body');
+            $table->text('body')->nullable();
             $table->json('attachment')->nullable();
             $table->boolean('seen')->default(0);
             $table->timestamps();

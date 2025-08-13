@@ -123,7 +123,8 @@ function sendMessage() {
     tempMessageId += 1;
     let tempID = `temp_${tempMessageId}`;
     const inputValue = messageInput.val();
-    if (inputValue.length > 0) {
+    let hasAttachment = !!$(".attachment-input").val();
+    if (inputValue.length > 0 || hasAttachment) {
         const formData = new FormData(messageForm[0]);
         formData.append("message", inputValue);
         formData.append("id", getMessageId());
@@ -138,7 +139,7 @@ function sendMessage() {
             contentType: false,
             beforeSend: function () {
                 messageBoxContainer.append(
-                    sendTempMessageCard(tempID, inputValue)
+                    sendTempMessageCard(tempID, inputValue, hasAttachment)
                 );
                 messageForm.trigger("reset");
                 $(".emojionearea-editor").text("");
@@ -155,7 +156,22 @@ function sendMessage() {
     }
 }
 
-function sendTempMessageCard(tempId, message) {
+function sendTempMessageCard(tempId, message, attachment = false) {
+    if (attachment) {
+        return `
+        <div class="wsus__single_chat_area message-card" data-id="${tempId}">
+            <div class="wsus__single_chat chat_right">
+                <div class="pre_loader">
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                ${message.length > 0 ? `<p class="messages">${message}</p>` : ""}
+                <span class="clock"><i class="fas fa-clock"></i>Now</span>
+                <a class="action" href="#"><i class="fas fa-trash"></i></a>
+            </div>
+         </div>`;
+    }
     return `
    <div class="wsus__single_chat_area message-card" data-id="${tempId}">
       <div class="wsus__single_chat chat_right">
