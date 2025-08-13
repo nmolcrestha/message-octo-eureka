@@ -26,12 +26,15 @@
 @endpush
 
 <x-app-layout>
-    <section class="wsus__chat_app">
+    <section class="wsus__chat_app show_info">
 
         @include('messages.layouts.user-list-slidebar')
         <div class="wsus__chat_area">
 
             <div class="wsus__message_paceholder d-none"></div>
+            <div class="wsus__message_paceholder_blank d-flex justify-content-center align-items-center">
+                <span class="select_a_user">Select a user to start conversation</span>
+            </div>
 
             <div class="wsus__chat_area_header message-header">
                 <div class="header_left">
