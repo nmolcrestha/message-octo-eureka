@@ -50,7 +50,7 @@ class MessageController extends Controller
             'temporaryMsgId' => ['required'],
             'attachment' => ['nullable', 'image', 'max:2048']
         ]);
-        
+
         $attachmentPath = $this->uploadFile($request, 'attachment');
 
         $message = new Message();
@@ -64,6 +64,30 @@ class MessageController extends Controller
             'message' => $this->messageCard($message),
             'tempID' => $request->temporaryMsgId
         ]);
+    }
+
+    function getMessages(Request $request)
+    {
+        $messages = Message::where('to_id', Auth::user()->id)
+            ->where('form_id', $request['id'])
+            ->orWhere('to_id', $request['id'])
+            ->orWhere('form_id', Auth::user()->id)
+            ->latest()
+            ->paginate(20);
+
+        $response = [
+            'last_page' => $messages->lastPage(),
+            'messages' => '',
+        ];
+
+        $allMessages = '';
+        foreach ($messages->reverse() as $message) {
+            $allMessages .= $this->messageCard($message);
+        }
+
+        $response['messages'] = $allMessages;
+
+        return response()->json($response);
     }
 
     function messageCard($message)

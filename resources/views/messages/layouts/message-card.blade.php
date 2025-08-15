@@ -1,5 +1,5 @@
 <div class="wsus__single_chat_area">
-    <div class="wsus__single_chat chat_right">
+    <div class="wsus__single_chat {{ $message->form_id === auth()->id() ? 'chat_right' : '' }}">
         @if(!is_null($message->attachment))
         <a class="venobox" data-gall="gallery01" href="{{ asset(json_decode($message->attachment)) }}">
             <img src="{{ asset(json_decode($message->attachment)) }}" alt="gallery1" class="img-fluid w-100">

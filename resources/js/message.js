@@ -103,6 +103,7 @@ function getIdInfo(id) {
             enableChatBox();
         },
         success: function (data) {
+            fetchMessages(data.id);
             $(".message-header").find("img").attr("src", data.avatar);
             $(".message-header").find("h4").text(data.name);
             $(".message-info-view").find(".user_name").text(data.name);
@@ -167,7 +168,11 @@ function sendTempMessageCard(tempId, message, attachment = false) {
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
-                ${message.length > 0 ? `<p class="messages">${message}</p>` : ""}
+                ${
+                    message.length > 0
+                        ? `<p class="messages">${message}</p>`
+                        : ""
+                }
                 <span class="clock"><i class="fas fa-clock"></i>Now</span>
                 <a class="action" href="#"><i class="fas fa-trash"></i></a>
             </div>
@@ -187,6 +192,25 @@ function messageFormReset() {
     $(".attachment-block").addClass("d-none");
     messageForm.trigger("reset");
     $(".emojionearea-editor").text("");
+}
+//FETCH Message
+let messagePage = 1;
+let noMoreData = false;
+let messageLoading = false;
+function fetchMessages(id) {
+    $.ajax({
+        method: "GET",
+        url: "/get-message",
+        data: {
+            _token: csrf_token,
+            id: id,
+            page: messagePage,
+        },
+        success: function (data) {
+            messageBoxContainer.html(data.messages);
+        },
+        error: function (xhr, status, error) {},
+    });
 }
 
 //  ON DOM LOAD
