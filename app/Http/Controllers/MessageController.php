@@ -71,10 +71,10 @@ class MessageController extends Controller
         $messages = Message::where('to_id', Auth::user()->id)
             ->where('form_id', $request['id'])
             ->orWhere('to_id', $request['id'])
-            ->orWhere('form_id', Auth::user()->id)
+            ->Where('form_id', Auth::user()->id)
             ->latest()
             ->paginate(20);
-
+        
         $response = [
             'last_page' => $messages->lastPage(),
             'messages' => '',
@@ -86,7 +86,7 @@ class MessageController extends Controller
         }
 
         $response['messages'] = $allMessages;
-
+        
         return response()->json($response);
     }
 

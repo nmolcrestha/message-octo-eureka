@@ -24,7 +24,7 @@ function enableChatBox() {
 function disableChatBox() {
     $(".wsus__chat_app").removeClass("show_info");
     $(".wsus__message_paceholder").addClass("d-none");
-    $(".wsus__message_paceholder_blank").addClass("d-none");
+    $(".wsus__message_paceholder_blank").addClass("d-none"); 
 }
 
 let searchPage = 1;
@@ -103,7 +103,7 @@ function getIdInfo(id) {
             enableChatBox();
         },
         success: function (data) {
-            fetchMessages(data.id);
+            fetchMessages(data.id, true);
             $(".message-header").find("img").attr("src", data.avatar);
             $(".message-header").find("h4").text(data.name);
             $(".message-info-view").find(".user_name").text(data.name);
@@ -144,6 +144,7 @@ function sendMessage() {
                 messageBoxContainer.append(
                     sendTempMessageCard(tempID, inputValue, hasAttachment)
                 );
+                scrollToBottom(messageBoxContainer);
                 messageFormReset();
             },
             success: function (data) {
@@ -197,7 +198,12 @@ function messageFormReset() {
 let messagePage = 1;
 let noMoreData = false;
 let messageLoading = false;
-function fetchMessages(id) {
+function fetchMessages(id, newFetch = true) {
+    if(noMoreData) return;
+    if(newFetch){
+        messagePage = 1;
+        noMoreData = false;
+    }
     $.ajax({
         method: "GET",
         url: "/get-message",
@@ -207,10 +213,22 @@ function fetchMessages(id) {
             page: messagePage,
         },
         success: function (data) {
-            messageBoxContainer.html(data.messages);
+            if(messagePage == 1){
+                messageBoxContainer.html(data.messages);
+                scrollToBottom(messageBoxContainer);
+            }else{
+                messageBoxContainer.prepend(data.messages);
+            }
+            noMoreData = messagePage >= data?.last_page;
+            if(!noMoreData)  messagePage += 1;
+            
         },
         error: function (xhr, status, error) {},
     });
+}
+
+function scrollToBottom(container) {
+    container.stop().animate({ scrollTop: container[0].scrollHeight });
 }
 
 //  ON DOM LOAD
@@ -251,8 +269,13 @@ $(document).ready(function () {
         imagePreview(this, ".attachment-preview");
         $(".attachment-block").removeClass("d-none");
     });
-
+ 
     $(".cancel-attachment").on("click", function () {
         messageFormReset();
     });
+
+    //Chat pagination
+    actionOnScroll(".wsus__chat_area_body", function () {
+        fetchMessages(getMessageId());
+    }, true );
 });
