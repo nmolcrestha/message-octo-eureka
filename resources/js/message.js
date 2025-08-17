@@ -198,33 +198,35 @@ function messageFormReset() {
 let messagePage = 1;
 let noMoreData = false;
 let messageLoading = false;
-function fetchMessages(id, newFetch = true) {
-    if(noMoreData) return;
+function fetchMessages(id, newFetch = false) {
+    
     if(newFetch){
         messagePage = 1;
         noMoreData = false;
     }
-    $.ajax({
-        method: "GET",
-        url: "/get-message",
-        data: {
-            _token: csrf_token,
-            id: id,
-            page: messagePage,
-        },
-        success: function (data) {
-            if(messagePage == 1){
-                messageBoxContainer.html(data.messages);
-                scrollToBottom(messageBoxContainer);
-            }else{
-                messageBoxContainer.prepend(data.messages);
-            }
-            noMoreData = messagePage >= data?.last_page;
-            if(!noMoreData)  messagePage += 1;
-            
-        },
-        error: function (xhr, status, error) {},
-    });
+    if (!noMoreData){
+        $.ajax({
+            method: "GET",
+            url: "/get-message",
+            data: {
+                _token: csrf_token,
+                id: id,
+                page: messagePage,
+            },
+            success: function (data) {
+                if(messagePage == 1){
+                    messageBoxContainer.html(data.messages);
+                    scrollToBottom(messageBoxContainer);
+                }else{
+                    messageBoxContainer.prepend(data.messages);
+                }
+                noMoreData = messagePage >= data?.last_page;
+                if(!noMoreData)  messagePage += 1;
+                
+            },
+            error: function (xhr, status, error) {},
+        });
+    };
 }
 
 function scrollToBottom(container) {
