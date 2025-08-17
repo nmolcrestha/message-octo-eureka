@@ -1,4 +1,4 @@
-<div class="wsus__single_chat_area">
+<div class="wsus__single_chat_area message-card" data-id="{{ $message->id }}">
     <div class="wsus__single_chat {{ $message->form_id === auth()->id() ? 'chat_right' : '' }}">
         @if(!is_null($message->attachment))
         <a class="venobox" data-gall="gallery01" href="{{ asset(json_decode($message->attachment)) }}">

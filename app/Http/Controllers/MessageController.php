@@ -77,6 +77,7 @@ class MessageController extends Controller
         
         $response = [
             'last_page' => $messages->lastPage(),
+            'last_message' => $messages->last(),
             'messages' => '',
         ];
 
