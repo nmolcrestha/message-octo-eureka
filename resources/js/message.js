@@ -113,7 +113,6 @@ function getIdInfo(id) {
             $(".message-info-view")
                 .find(".unique_user_name")
                 .text(data.user_name);
-            disableChatBox();
             nProgress.done();
         },
         error: function (xhr, status, error) {
@@ -204,7 +203,7 @@ function fetchMessages(id, newFetch = false) {
         messagePage = 1;
         noMoreData = false;
     }
-    if (!noMoreData){
+    if (!noMoreData && !messageLoading) {
         $.ajax({
             method: "GET",
             url: "/get-message",
@@ -213,7 +212,18 @@ function fetchMessages(id, newFetch = false) {
                 id: id,
                 page: messagePage,
             },
+            beforeSend: function () {
+                messageLoading = true;
+                let loadar = `<div class="text-center message -loader">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                </div>`;
+                messageBoxContainer.prepend(loadar);
+            },
             success: function (data) {
+                messageLoading = false;
+                messageBoxContainer.find(".message -loader").remove();
                 if(messagePage == 1){
                     messageBoxContainer.html(data.messages);
                     scrollToBottom(messageBoxContainer);
@@ -225,6 +235,7 @@ function fetchMessages(id, newFetch = false) {
                 }
                 noMoreData = messagePage >= data?.last_page;
                 if(!noMoreData)  messagePage += 1;
+                disableChatBox();
                 
             },
             error: function (xhr, status, error) {},

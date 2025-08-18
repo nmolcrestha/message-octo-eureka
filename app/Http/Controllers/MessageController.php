@@ -81,6 +81,11 @@ class MessageController extends Controller
             'messages' => '',
         ];
 
+        if(count($messages) < 1) {
+            $response['messages'] = "<div class='d-flex justify-content-center align-items-center h-100'><p>Say something... </p></div>";
+            return response()->json($response);
+        }
+
         $allMessages = '';
         foreach ($messages->reverse() as $message) {
             $allMessages .= $this->messageCard($message);
@@ -96,3 +101,4 @@ class MessageController extends Controller
         return view('messages.layouts.message-card', compact('message'))->render();
     }
 }
+  
