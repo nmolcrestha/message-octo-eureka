@@ -75,7 +75,7 @@ class MessageController extends Controller
             ->Where('form_id', Auth::user()->id)
             ->latest()
             ->paginate(20);
-        
+
         $response = [
             'last_page' => $messages->lastPage(),
             'last_message' => $messages->last(),
@@ -93,7 +93,7 @@ class MessageController extends Controller
         }
 
         $response['messages'] = $allMessages;
-        
+
         return response()->json($response);
     }
 
@@ -106,19 +106,46 @@ class MessageController extends Controller
     {
         $users = Message::join('users', function($join){
             $join->on('messages.form_id', '=', 'users.id')
-            ->orOn('messages.to_id', '=', 'users.id');
+                ->orOn('messages.to_id', '=', 'users.id');
         })
-        ->where(function($q){
-            $q->where('messages.form_id', Auth::user()->id)
-              ->orWhere('messages.to_id', Auth::user()->id);
-        })
-        ->where('users.id', '!=', Auth::user()->id)
-        ->select('users.*', DB::raw('MAX(messages.created_at) as max_created_at'))
-        ->orderBy('max_created_at', 'desc')
-        ->groupBy('users.id')
-        ->paginate(10);
+            ->where(function($q){
+                $q->where('messages.form_id', Auth::user()->id)
+                    ->orWhere('messages.to_id', Auth::user()->id);
+            })
+            ->where('users.id', '!=', Auth::user()->id)
+            ->select('users.*', DB::raw('MAX(messages.created_at) as max_created_at'))
+            ->orderBy('max_created_at', 'desc')
+            ->groupBy('users.id')
+            ->paginate(10);
 
-        return $users;
+        $contacts = '';
+        if (count($users) > 0) {
+            foreach ($users as $user) {
+                $contacts .= $this->getContactItem($user);
+            }
+        } else {
+            $contacts .= "<p>No contacts found</p>";
+        }
+
+        return response()->json([
+            'contacts' => $contacts,
+            'last_page' => $users->lastPage()
+        ]);
+
+    }
+
+    function getContactItem($user)
+    {
+        $lastMessage = Message::where('to_id', Auth::user()->id)
+            ->where('form_id', $user->id)
+            ->orWhere('to_id', $user->id)
+            ->Where('form_id', Auth::user()->id)
+            ->latest()->first();
+
+        $unseenCounter = Message::where('to_id', Auth::user()->id)
+            ->where('form_id', $user->id)
+            ->where('seen', 0)
+            ->count();
+        return view('messages.layouts.contact', compact('lastMessage', 'unseenCounter', 'user'))->render();
     }
 }
-  

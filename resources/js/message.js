@@ -2,7 +2,8 @@ var tempMessageId = 0;
 const messageForm = $(".message-form"),
     messageInput = $(".message-input"),
     messageBoxContainer = $(".wsus__chat_area_body"),
-    csrf_token = $("meta[name='csrf-token']").attr("content");
+    csrf_token = $("meta[name='csrf-token']").attr("content"),
+    messageContentBox = $(".message-contact");
 
 const getMessageId = () => $("meta[name='id']").attr("content");
 const setMessageId = (id) => $("meta[name='id']").attr("content", id);
@@ -256,8 +257,31 @@ function getContacts(){
             method: "GET",
             url: "/get-contact",
             data: {page: contactPage},
-            success: function () {},
-            error: function (xhr, status, error) {},
+            beforeSend: function () {
+                contactLoading = true;
+                let loadar = `<div class="text-center contact-loader">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>`;
+            messageContentBox.append(loadar);
+            },
+            success: function (data) {
+                contactLoading = false;
+                messageContentBox.find(".contact-loader").remove();
+                if(contactPage < 2){
+                    messageContentBox.html(data.contacts);
+                }else{
+                    messageContentBox.append(data.contacts);
+                }
+
+                noMoreContact = contactPage >= data?.last_page;
+                if(!noMoreContact)  contactPage += 1;
+            },
+            error: function (xhr, status, error) {
+                contactLoading = false;
+                messageContentBox.find(".contact-loader").remove();
+            },
         });
     }
 }
@@ -310,4 +334,11 @@ $(document).ready(function () {
     actionOnScroll(".wsus__chat_area_body", function () {
         fetchMessages(getMessageId());
     }, true );
+
+    //Contact Pagination 
+     actionOnScroll(".message-contact", function () {
+        getContacts();
+    } );
+
+
 });
