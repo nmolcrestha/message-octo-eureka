@@ -28,4 +28,5 @@ Route::middleware('auth')->group(function(){
     Route::get('/get-user', [MessageController::class, 'getUser'])->name('message.getUser');
     Route::post('/send-message', [MessageController::class, 'sendMessage'])->name('message.send');
     Route::get('/get-message', [MessageController::class, 'getMessages'])->name('message.getMessages');
+    Route::get('/get-contact', [MessageController::class,'getContact'])->name('message.getContact');
 });

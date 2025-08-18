@@ -247,7 +247,23 @@ function scrollToBottom(container) {
     container.stop().animate({ scrollTop: container[0].scrollHeight });
 }
 
+let contactPage = 1;
+let noMoreContact = false;
+let contactLoading = false;
+function getContacts(){
+    if (!noMoreContact && !contactLoading){
+        $.ajax({
+            method: "GET",
+            url: "/get-contact",
+            data: {page: contactPage},
+            success: function () {},
+            error: function (xhr, status, error) {},
+        });
+    }
+}
+
 //  ON DOM LOAD
+getContacts();
 $(document).ready(function () {
     $("#select_file").change(function () {
         imagePreview(this, ".profile-image-preview");
