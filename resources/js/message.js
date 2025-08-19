@@ -289,6 +289,15 @@ function getContacts(){
 //  ON DOM LOAD
 getContacts();
 $(document).ready(function () {
+    if(window.innerWidth < 768){
+        $("body").on("click", ".messenger-item-list", function () {
+            $(".wsus__user_list").addClass("d-none");
+        });
+
+        $("body").on("click", ".back_to_list", function () {
+            $(".wsus__user_list").removeClass("d-none");
+        });
+    }
     $("#select_file").change(function () {
         imagePreview(this, ".profile-image-preview");
     });
