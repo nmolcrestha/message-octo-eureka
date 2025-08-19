@@ -148,6 +148,7 @@ function sendMessage() {
                 messageFormReset();
             },
             success: function (data) {
+                updateContactList(getMessageId());
                 const tempMessageCardElement = messageBoxContainer.find(
                     `.message-card[data-id="${tempID}"]`
                 );
@@ -286,6 +287,30 @@ function getContacts(){
     }
 }
 
+//Update Contact List
+function updateContactList(user_id) {
+    $.ajax({
+        method: "GET",
+        data: { user_id: user_id },
+        url: "/update-contact",
+        success: function (data) {
+            messageContentBox
+                .find(`.messenger-item-list[data-id="${user_id}"]`)
+                .remove();
+            messageContentBox.prepend(data.contact_item);
+            if (user_id == getMessageId()) updateSelectedContent(user_id);
+        },
+        error: function (xhr, status, error) {},
+    });
+}
+
+function updateSelectedContent(userId){
+    
+    $(".messenger-item-list").removeClass("active");
+    $(`.messenger-item-list[data-id="${userId}"]`).addClass("active");
+
+}
+
 //  ON DOM LOAD
 getContacts();
 $(document).ready(function () {
@@ -320,6 +345,7 @@ $(document).ready(function () {
 
     $("body").on("click", ".messenger-item-list", function () {
         const dataId = $(this).data("id");
+        updateSelectedContent(dataId);
         setMessageId(dataId);
         getIdInfo(dataId);
     });

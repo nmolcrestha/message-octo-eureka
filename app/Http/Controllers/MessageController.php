@@ -82,7 +82,7 @@ class MessageController extends Controller
             'messages' => '',
         ];
 
-        if(count($messages) < 1) {
+        if (count($messages) < 1) {
             $response['messages'] = "<div class='d-flex justify-content-center align-items-center h-100'><p>Say something... </p></div>";
             return response()->json($response);
         }
@@ -104,11 +104,11 @@ class MessageController extends Controller
 
     function getContact()
     {
-        $users = Message::join('users', function($join){
+        $users = Message::join('users', function ($join) {
             $join->on('messages.form_id', '=', 'users.id')
                 ->orOn('messages.to_id', '=', 'users.id');
         })
-            ->where(function($q){
+            ->where(function ($q) {
                 $q->where('messages.form_id', Auth::user()->id)
                     ->orWhere('messages.to_id', Auth::user()->id);
             })
@@ -131,7 +131,6 @@ class MessageController extends Controller
             'contacts' => $contacts,
             'last_page' => $users->lastPage()
         ]);
-
     }
 
     function getContactItem($user)
@@ -147,5 +146,19 @@ class MessageController extends Controller
             ->where('seen', 0)
             ->count();
         return view('messages.layouts.contact', compact('lastMessage', 'unseenCounter', 'user'))->render();
+    }
+
+    function updateContact(Request $request)
+    {
+        $user = User::find($request['user_id']);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 401);
+        }
+
+        $contactItem = $this->getContactItem($user);
+        return response()->json([
+            'contact_item' => $contactItem
+        ]);
     }
 }
