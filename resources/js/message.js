@@ -1,5 +1,6 @@
 var tempMessageId = 0;
 const messageForm = $(".message-form"),
+    authID = $("meta[name='auth_id']").attr("content"),
     messageInput = $(".message-input"),
     messageBoxContainer = $(".wsus__chat_area_body"),
     csrf_token = $("meta[name='csrf-token']").attr("content"),
@@ -309,6 +310,7 @@ function getContacts() {
 
 //Update Contact List
 function updateContactList(user_id) {
+    if(user_id == authID) return;
     $.ajax({
         method: "GET",
         data: { user_id: user_id },

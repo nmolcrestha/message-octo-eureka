@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="id" content="">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="auth_id" content="{{ auth()->user()->id }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
