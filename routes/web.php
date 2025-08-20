@@ -31,4 +31,5 @@ Route::middleware('auth')->group(function(){
     Route::get('/get-contact', [MessageController::class,'getContact'])->name('message.getContact');
     Route::get('/update-contact', [MessageController::class, 'updateContact'])->name('message.updateContact');
     Route::post('/make-seen', [MessageController::class, 'makeSeen'])->name('message.makeSeen');
+    Route::post('/make-favourite', [MessageController::class, 'makeFavourite'])->name('message.makeFavourite');
 });

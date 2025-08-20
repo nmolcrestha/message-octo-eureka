@@ -212,6 +212,20 @@ function makeSeen(status) {
         error: function (xhr, status, error) {},
     });
 }
+
+function makeFavourite(user_id) {
+    $.ajax({
+        method: "POST",
+        url: "/make-favourite",
+        data: {
+            _token: csrf_token,
+            id: user_id,
+        },
+        success: function (data) {},
+        error: function (xhr, status, error) {},
+    });
+}
+
 //FETCH Message
 let messagePage = 1;
 let noMoreData = false;
@@ -397,5 +411,10 @@ $(document).ready(function () {
     //Contact Pagination
     actionOnScroll(".message-contact", function () {
         getContacts();
+    });
+
+    $(".favourite").on("click", function (e) {
+        e.preventDefault();
+        makeFavourite(getMessageId());
     });
 });

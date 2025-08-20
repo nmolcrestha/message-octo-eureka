@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Favourites;
 use App\Models\Message;
 use App\Models\User;
 use App\Traits\FileUploadTrait;
@@ -161,12 +162,28 @@ class MessageController extends Controller
             'contact_item' => $contactItem
         ]);
     }
-    
+
     function makeSeen(Request $request)
     {
         Message::where('form_id', $request['id'])
-                ->where('to_id', Auth::user()->id)
-                ->where('seen', false)->update(['seen' => true]);
-        return true; 
+            ->where('to_id', Auth::user()->id)
+            ->where('seen', false)->update(['seen' => true]);
+        return true;
+    }
+
+    function makeFavourite(Request $request)
+    {
+        $query = Favourites::where(['favourite_id' => $request['id'], 'user_id' => Auth::user()->id]);
+        $favouriteStatus = $query->exists();
+        if (!$favouriteStatus) {
+            $favourite = new Favourites();
+            $favourite->user_id = Auth::user()->id;
+            $favourite->favourite_id = $request['id'];
+            $favourite->save();
+            return $favourite ? true : false;
+        }
+
+        $query->delete();
+        return true;
     }
 }
