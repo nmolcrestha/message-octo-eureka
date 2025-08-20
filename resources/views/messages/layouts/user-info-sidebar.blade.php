@@ -19,31 +19,6 @@
                     <img src="images/chat_img.png" alt="gallery1" class="img-fluid w-100">
                 </a>
             </li>
-            <li>
-                <a class="venobox" data-gall="gallery01" href="images/chat_img.png">
-                    <img src="images/chat_img.png" alt="gallery1" class="img-fluid w-100">
-                </a>
-            </li>
-            <li>
-                <a class="venobox" data-gall="gallery01" href="images/chat_img.png">
-                    <img src="images/chat_img.png" alt="gallery1" class="img-fluid w-100">
-                </a>
-            </li>
-            <li>
-                <a class="venobox" data-gall="gallery01" href="images/chat_img.png">
-                    <img src="images/chat_img.png" alt="gallery1" class="img-fluid w-100">
-                </a>
-            </li>
-            <li>
-                <a class="venobox" data-gall="gallery01" href="images/chat_img.png">
-                    <img src="images/chat_img.png" alt="gallery1" class="img-fluid w-100">
-                </a>
-            </li>
-            <li>
-                <a class="venobox" data-gall="gallery01" href="images/chat_img.png">
-                    <img src="images/chat_img.png" alt="gallery1" class="img-fluid w-100">
-                </a>
-            </li>
         </ul>
     </div>
 </div>

@@ -1,8 +1,8 @@
-import './bootstrap';
-import './notyf';
-import './nprogress';
+import "./bootstrap";
+import "./notyf";
+import "./nprogress";
 
-import Alpine from 'alpinejs';
+import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
 

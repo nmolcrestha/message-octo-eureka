@@ -310,7 +310,7 @@ function getContacts() {
 
 //Update Contact List
 function updateContactList(user_id) {
-    if(user_id == authID) return;
+    if (user_id == authID) return;
     $.ajax({
         method: "GET",
         data: { user_id: user_id },
