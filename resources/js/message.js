@@ -25,7 +25,7 @@ function enableChatBox() {
 function disableChatBox() {
     $(".wsus__chat_app").removeClass("show_info");
     $(".wsus__message_paceholder").addClass("d-none");
-    $(".wsus__message_paceholder_blank").addClass("d-none"); 
+    $(".wsus__message_paceholder_blank").addClass("d-none");
 }
 
 let searchPage = 1;
@@ -195,13 +195,28 @@ function messageFormReset() {
     messageForm.trigger("reset");
     $(".emojionearea-editor").text("");
 }
+
+function makeSeen(status) {
+    $(`.messenger-item-list[data-id="${getMessageId()}"]`)
+        .find(".unseen-count")
+        .remove();
+    $.ajax({
+        method: "POST",
+        url: "/make-seen",
+        data: {
+            _token: csrf_token,
+            id: getMessageId(),
+        },
+        success: function (data) {},
+        error: function (xhr, status, error) {},
+    });
+}
 //FETCH Message
 let messagePage = 1;
 let noMoreData = false;
 let messageLoading = false;
 function fetchMessages(id, newFetch = false) {
-    
-    if(newFetch){
+    if (newFetch) {
         messagePage = 1;
         noMoreData = false;
     }
@@ -216,7 +231,7 @@ function fetchMessages(id, newFetch = false) {
             },
             beforeSend: function () {
                 messageLoading = true;
-                let loadar = `<div class="text-center message -loader">
+                let loadar = `<div class="text-center message-loader">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
@@ -225,24 +240,29 @@ function fetchMessages(id, newFetch = false) {
             },
             success: function (data) {
                 messageLoading = false;
-                messageBoxContainer.find(".message -loader").remove();
-                if(messagePage == 1){
+                messageBoxContainer.find(".message-loader").remove();
+                makeSeen(true);
+                if (messagePage == 1) {
                     messageBoxContainer.html(data.messages);
                     scrollToBottom(messageBoxContainer);
-                }else{
-                    const lastMsg = messageBoxContainer.find(".message-card").first();
-                    const currOffset = lastMsg.offset().top - messageBoxContainer.scrollTop();
+                } else {
+                    const lastMsg = messageBoxContainer
+                        .find(".message-card")
+                        .first();
+                    const currOffset =
+                        lastMsg.offset().top - messageBoxContainer.scrollTop();
                     messageBoxContainer.prepend(data.messages);
-                    messageBoxContainer.scrollTop(lastMsg.offset().top - currOffset); 
+                    messageBoxContainer.scrollTop(
+                        lastMsg.offset().top - currOffset
+                    );
                 }
                 noMoreData = messagePage >= data?.last_page;
-                if(!noMoreData)  messagePage += 1;
+                if (!noMoreData) messagePage += 1;
                 disableChatBox();
-                
             },
             error: function (xhr, status, error) {},
         });
-    };
+    }
 }
 
 function scrollToBottom(container) {
@@ -252,12 +272,12 @@ function scrollToBottom(container) {
 let contactPage = 1;
 let noMoreContact = false;
 let contactLoading = false;
-function getContacts(){
-    if (!noMoreContact && !contactLoading){
+function getContacts() {
+    if (!noMoreContact && !contactLoading) {
         $.ajax({
             method: "GET",
             url: "/get-contact",
-            data: {page: contactPage},
+            data: { page: contactPage },
             beforeSend: function () {
                 contactLoading = true;
                 let loadar = `<div class="text-center contact-loader">
@@ -265,19 +285,19 @@ function getContacts(){
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>`;
-            messageContentBox.append(loadar);
+                messageContentBox.append(loadar);
             },
             success: function (data) {
                 contactLoading = false;
                 messageContentBox.find(".contact-loader").remove();
-                if(contactPage < 2){
+                if (contactPage < 2) {
                     messageContentBox.html(data.contacts);
-                }else{
+                } else {
                     messageContentBox.append(data.contacts);
                 }
 
                 noMoreContact = contactPage >= data?.last_page;
-                if(!noMoreContact)  contactPage += 1;
+                if (!noMoreContact) contactPage += 1;
             },
             error: function (xhr, status, error) {
                 contactLoading = false;
@@ -304,17 +324,15 @@ function updateContactList(user_id) {
     });
 }
 
-function updateSelectedContent(userId){
-    
+function updateSelectedContent(userId) {
     $(".messenger-item-list").removeClass("active");
     $(`.messenger-item-list[data-id="${userId}"]`).addClass("active");
-
 }
 
 //  ON DOM LOAD
 getContacts();
 $(document).ready(function () {
-    if(window.innerWidth < 768){
+    if (window.innerWidth < 768) {
         $("body").on("click", ".messenger-item-list", function () {
             $(".wsus__user_list").addClass("d-none");
         });
@@ -360,20 +378,22 @@ $(document).ready(function () {
         imagePreview(this, ".attachment-preview");
         $(".attachment-block").removeClass("d-none");
     });
- 
+
     $(".cancel-attachment").on("click", function () {
         messageFormReset();
     });
 
     //Chat pagination
-    actionOnScroll(".wsus__chat_area_body", function () {
-        fetchMessages(getMessageId());
-    }, true );
+    actionOnScroll(
+        ".wsus__chat_area_body",
+        function () {
+            fetchMessages(getMessageId());
+        },
+        true
+    );
 
-    //Contact Pagination 
-     actionOnScroll(".message-contact", function () {
+    //Contact Pagination
+    actionOnScroll(".message-contact", function () {
         getContacts();
-    } );
-
-
+    });
 });

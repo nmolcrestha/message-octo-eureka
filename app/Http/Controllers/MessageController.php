@@ -143,7 +143,7 @@ class MessageController extends Controller
 
         $unseenCounter = Message::where('to_id', Auth::user()->id)
             ->where('form_id', $user->id)
-            ->where('seen', 0)
+            ->where('seen', false)
             ->count();
         return view('messages.layouts.contact', compact('lastMessage', 'unseenCounter', 'user'))->render();
     }
@@ -160,5 +160,13 @@ class MessageController extends Controller
         return response()->json([
             'contact_item' => $contactItem
         ]);
+    }
+    
+    function makeSeen(Request $request)
+    {
+        Message::where('form_id', $request['id'])
+                ->where('to_id', Auth::user()->id)
+                ->where('seen', false)->update(['seen' => true]);
+        return true; 
     }
 }
