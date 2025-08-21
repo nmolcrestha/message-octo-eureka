@@ -105,16 +105,17 @@ function getIdInfo(id) {
             enableChatBox();
         },
         success: function (data) {
-            fetchMessages(data.id, true);
-            $(".message-header").find("img").attr("src", data.avatar);
-            $(".message-header").find("h4").text(data.name);
-            $(".message-info-view").find(".user_name").text(data.name);
+            fetchMessages(data.user.id, true);
+            data.favorite? $(".favourite").addClass("active") : $(".favourite").removeClass("active");
+            $(".message-header").find("img").attr("src", data.user.avatar);
+            $(".message-header").find("h4").text(data.user.name);
+            $(".message-info-view").find(".user_name").text(data.user.name);
             $(".message-info-view")
                 .find(".user_photo img")
-                .attr("src", data.avatar);
+                .attr("src", data.user.avatar);
             $(".message-info-view")
                 .find(".unique_user_name")
-                .text(data.user_name);
+                .text(data.user.user_name);
             nProgress.done();
         },
         error: function (xhr, status, error) {
@@ -214,6 +215,7 @@ function makeSeen(status) {
 }
 
 function makeFavourite(user_id) {
+    $('.favourite').toggleClass('active');
     $.ajax({
         method: "POST",
         url: "/make-favourite",
@@ -221,7 +223,13 @@ function makeFavourite(user_id) {
             _token: csrf_token,
             id: user_id,
         },
-        success: function (data) {},
+        success: function (data) {
+            if(data.status === 'added') {
+                notyf.success(data.message);
+            } else if(data.status === 'removed') {
+                notyf.error(data.message);
+            }
+        },
         error: function (xhr, status, error) {},
     });
 }

@@ -41,7 +41,13 @@ class MessageController extends Controller
     function getUser(Request $request)
     {
         $user = User::find($request['id']);
-        return response()->json($user);
+        $favorite = Favourites::where(['favourite_id' => $user->id, 'user_id' => Auth::user()->id])->exists();
+        return response()->json(
+            [
+                'user' => $user,
+                'favorite' => $favorite
+            ]
+        );
     }
 
     function sendMessage(Request $request)
@@ -180,10 +186,16 @@ class MessageController extends Controller
             $favourite->user_id = Auth::user()->id;
             $favourite->favourite_id = $request['id'];
             $favourite->save();
-            return $favourite ? true : false;
+            return response()->json([
+                'status' => 'added',
+                'message' => 'Added to favourites'
+            ]);
         }
 
         $query->delete();
-        return true;
+        return response()->json([
+            'status' => 'removed',
+            'message' => 'Removed from favourites'
+        ]);
     }
 }
