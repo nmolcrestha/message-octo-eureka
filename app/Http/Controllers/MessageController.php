@@ -213,4 +213,14 @@ class MessageController extends Controller
             'message' => 'Removed from favourites'
         ]);
     }
+
+    function deleteMessage(Request $request)
+    {
+        $message = Message::find($request['message_id']);
+        if($message->form_id == Auth::user()->id){
+            $message->delete();
+            return response()->json(['message' => 'Message deleted successfully'], 200);
+        }
+        return;
+    }
 }

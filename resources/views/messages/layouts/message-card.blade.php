@@ -9,6 +9,8 @@
         <p class="messages">{{ $message->body }}</p>
         @endif
         <span class="time"> {{ timeAgo($message->created_at) }}</span>
-        <a class="action" href="#"><i class="fas fa-trash"></i></a>
+        @if($message->form_id === auth()->id())
+        <a class="action dlt-message" data-id="{{ $message->id }}"><i class="fas fa-trash"></i></a>
+        @endif
     </div>
 </div>

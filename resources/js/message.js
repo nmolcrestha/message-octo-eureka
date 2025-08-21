@@ -354,6 +354,32 @@ function updateSelectedContent(userId) {
     $(`.messenger-item-list[data-id="${userId}"]`).addClass("active");
 }
 
+function deleteMessage(message_id)
+{
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+        $.ajax({
+            method: "DELETE",
+            url: "/delete-message",
+            data: { _token: csrf_token, message_id: message_id },
+            beforeSend: function(){
+                $(`.message-card[data-id="${message_id}"]`).remove();
+            },
+            success: function (data) {
+                updateContactList(getMessageId());
+            },
+            error: function (xhr, status, error) {},
+        });
+    });
+}
+
 //  ON DOM LOAD
 getContacts();
 $(document).ready(function () {
@@ -426,4 +452,11 @@ $(document).ready(function () {
         e.preventDefault();
         makeFavourite(getMessageId());
     });
+
+    //Delete Message
+    $("body").on("click", ".dlt-message", function (e) {
+        e.preventDefault();
+        let id = $(this).data("id");
+        deleteMessage(id);
+    })
 });
