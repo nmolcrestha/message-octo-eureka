@@ -106,6 +106,7 @@ function getIdInfo(id) {
         },
         success: function (data) {
             fetchMessages(data.user.id, true);
+            $(".wsus__chat_info_gallery").html(data.shared_photos);
             data.favorite? $(".favourite").addClass("active") : $(".favourite").removeClass("active");
             $(".message-header").find("img").attr("src", data.user.avatar);
             $(".message-header").find("h4").text(data.user.name);

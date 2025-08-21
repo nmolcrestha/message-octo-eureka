@@ -43,10 +43,24 @@ class MessageController extends Controller
     {
         $user = User::find($request['id']);
         $favorite = Favourites::where(['favourite_id' => $user->id, 'user_id' => Auth::user()->id])->exists();
+        $sharedPhotos = Message::where('to_id', Auth::user()->id)
+            ->where('form_id', $user->id)
+            ->orWhere('to_id', $user->id)
+            ->Where('form_id', Auth::user()->id)
+            ->whereNotNull('attachment')->latest()->get();
+        $attachment = '';
+        if($sharedPhotos->count() > 0) {
+            foreach ($sharedPhotos as $photo) {
+                $attachment .= view('messages.layouts.gallery-item', compact('photo'))->render();
+            }
+        }else{
+            $attachment .= '<span class="nothing_share">Nothing shared yet</span>';
+        }
         return response()->json(
             [
                 'user' => $user,
-                'favorite' => $favorite
+                'favorite' => $favorite,
+                'shared_photos' => $attachment
             ]
         );
     }
