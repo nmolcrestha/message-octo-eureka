@@ -15,7 +15,8 @@ class MessageController extends Controller
     use FileUploadTrait;
     function index()
     {
-        return view('messages.index');
+        $favourites = Favourites::with('favourites:id,name,avatar')->where('user_id', Auth::user()->id)->get();
+        return view('messages.index', compact('favourites'));
     }
 
     function userSearch(Request $request)
