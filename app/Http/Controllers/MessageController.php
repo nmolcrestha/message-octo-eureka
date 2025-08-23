@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Message as EventsMessage;
 use App\Models\Favourites;
 use App\Models\Message;
 use App\Models\User;
@@ -82,6 +83,8 @@ class MessageController extends Controller
         $message->body = $request['message'];
         if ($attachmentPath) $message->attachment = json_encode($attachmentPath);
         $message->save();
+        // broadcast the message
+        EventsMessage::dispatch($message);
 
         return response()->json([
             'message' => $this->messageCard($message),
@@ -94,7 +97,7 @@ class MessageController extends Controller
         $messages = Message::where('to_id', Auth::user()->id)
             ->where('form_id', $request['id'])
             ->orWhere('to_id', $request['id'])
-            ->Where('form_id', Auth::user()->id)
+            ->Where('form_id', operator: Auth::user()->id)
             ->latest()
             ->paginate(20);
 
